@@ -1,0 +1,34 @@
+.search-input {
+  border-radius: 0;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.custom-header {
+  padding: 0rem 2.2rem;
+}
+
+// .custom-card {
+//   width: 70%;
+//   height: 70%;
+// }
+// .container {
+//   width: 1040px;
+//   height: max-content;
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: center;
+// }
+.full-screen-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #8B5CF6;
+  /* Purple color - adjust as needed */
+}
+.p-button-custom{
+  cursor: pointer;
+}
+.p-button-custom:focus {
+    box-shadow: none !important;
+    outline: none !important;
+  }
