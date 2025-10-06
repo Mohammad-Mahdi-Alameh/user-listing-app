@@ -1,0 +1,33 @@
+<!-- (onLazyLoad)="onPageChange($event)" -->
+<p-dataView
+  #dv
+  [value]="pagedEntityRecords"
+  [rows]="entityRecordsPerPage"
+  [paginator]="true"
+  [lazy]="true"
+  [loading]="loading"
+  [totalRecords]="totalEntityRecords"
+  [first]="dataViewFirstIndex"
+  (onPage)="onPageChange($event)"
+>
+  <ng-template pTemplate="list" let-entityRecords>
+    <div class="container">
+      <div
+        class="card"
+        *ngFor="let entity of entityRecords"
+        (click)="navigateToUserDetailsPage(entity.id)"
+      >
+        <div class="card-user-img">
+          <img
+            [src]="entity.avatar"
+            [alt]="entity.first_name + ' ' + entity.last_name"
+          />
+        </div>
+        <div class="card-user-info">
+          <h3>{{ entity.first_name }} {{ entity.last_name }}</h3>
+          <p>{{ entity.email }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-dataView>

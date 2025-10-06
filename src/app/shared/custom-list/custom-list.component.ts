@@ -1,0 +1,153 @@
+import { CommonModule } from '@angular/common';
+import { Component, Input, ViewChild } from '@angular/core';
+import { Subject, debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
+import { AccordionModule } from 'primeng/accordion';
+import { DataViewModule } from 'primeng/dataview';
+import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
+import { UtilitiesService } from '../../core/services/utilities.service';
+import { ApiService } from '../../core/services/api.service';
+import { HttpHeaders } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag'; @Component({
+  selector: 'app-custom-list',
+  standalone: true,
+  imports: [CommonModule, DataViewModule, FormsModule, AccordionModule, InputTextModule, PaginatorModule, ButtonModule, TagModule, CardModule],
+  templateUrl: './custom-list.component.html',
+  styleUrl: './custom-list.component.scss'
+})
+export class CustomListComponent {
+  @ViewChild('dv') dataView: any;
+  @Input() entityApiUrl: string = '';
+  @Input() entityApiHeader = new HttpHeaders();
+  pagedEntityRecords: any[] = [];
+  loading = true;
+  filterMode = false;
+  page = 1;
+  fetchedPages = [1];
+  filteredFetchedPages = [1];
+  totalEntityRecords = 0;
+  totalEntityRecordsBackup = 0;
+  entityRecordsPerPage = 0;
+  dataViewFirstIndex = 0;
+  entityRecordsPerPageBackup = 0;
+  criteriaEntityApiUrl: string = '';
+  entityRecords: { [key: number]: any[] } = {
+  }
+  entityRecordsBackup: { [key: number]: any[] } = {
+  }
+  filteredEntityRecords: { [key: number]: any[] } = {
+  }
+  @Input() set searchTerm(value: string) {
+    this._searchTerm = value;
+    this.searchTermChanged.next(value);
+  }
+  private _searchTerm: string = '';
+  get searchTerm(): string {
+    return this._searchTerm;
+  }
+
+  private searchTermChanged = new Subject<string>();
+  constructor(private router: Router,
+    private apiService: ApiService,
+    private utlitiesService: UtilitiesService) {
+  }
+
+  async handleSearchTermChange() {
+    this.loading = true;
+    this.searchTerm = this.searchTerm.trim();
+    //pay attention if id wasnt number
+    if (!this.searchTerm || this.searchTerm.length < 1) {
+      if (this.dataView) {
+        this.page = 1;
+      } else {
+        this.loading = false;
+        return;
+      }
+      this.pagedEntityRecords = this.entityRecords[this.page];
+      this.entityRecordsPerPage = this.entityRecordsPerPageBackup;
+      this.totalEntityRecords = this.totalEntityRecordsBackup;
+      this.filterMode = false;
+      this.loading = false;
+      return;
+    }
+    this.criteriaEntityApiUrl = `${this.entityApiUrl}/${this.searchTerm}`;
+    this.pagedEntityRecords = [await this.initializeEntityRecords(this.criteriaEntityApiUrl, true)];
+    this.loading = false;
+  }
+
+  async ngOnInit() {
+    this.searchTermChanged.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.handleSearchTermChange();
+    });
+    if (this.utlitiesService.entityRecords && Object.keys(this.utlitiesService.entityRecords).length > 0) {
+      this.entityRecords = this.utlitiesService.entityRecords;
+      this.page = this.utlitiesService.lastViewedPage;
+      this.entityRecordsPerPage = this.utlitiesService.entityRecordsPerPage;
+      this.totalEntityRecords = this.utlitiesService.totalEntityRecords;
+      this.dataViewFirstIndex = (this.entityRecordsPerPage * (this.page - 1));
+      this.pagedEntityRecords = this.entityRecords[this.utlitiesService.lastViewedPage];
+    } else {
+      this.pagedEntityRecords = await this.initializeEntityRecords(this.entityApiUrl);
+    }
+    this.loading = false
+  }
+
+  navigateToUserDetailsPage(userId: number) {
+    this.utlitiesService.lastViewedPage = this.page;
+    this.utlitiesService.entityRecords = this.entityRecords;
+    this.utlitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
+    this.utlitiesService.totalEntityRecords = this.totalEntityRecords;
+    this.router.navigate([`/users/${userId}`]);
+  }
+
+  async onPageChange(event: any) {
+    this.loading = true
+    this.page = (event.first / event.rows) + 1;
+    if (this.filterMode) {
+      if (!this.filteredFetchedPages.includes(this.page)) {
+        let draftContracts = await this.initializeEntityRecords(this.criteriaEntityApiUrl, true);
+        if (draftContracts?.length == 0) {
+          this.loading = false
+          return;
+        }
+        this.filteredFetchedPages.push(this.page);
+      }
+      this.pagedEntityRecords = this.filteredEntityRecords[this.page];
+    } else {
+      if (!this.fetchedPages.includes(this.page)) {
+        let entityRecords = await this.initializeEntityRecords(this.entityApiUrl);
+        if (entityRecords?.length == 0) {
+          this.loading = false
+          return;
+        }
+        this.fetchedPages.push(this.page);
+      }
+      this.pagedEntityRecords = this.entityRecords[this.page];
+    }
+    this.loading = false
+  }
+
+  async initializeEntityRecords(url: string, filterMode: boolean = false) {
+    let entityRecords = await firstValueFrom(this.apiService.get(`${url}?page=${this.page}`, this.entityApiHeader))
+    if (filterMode) {
+      this.filteredEntityRecords[this.page] = entityRecords.data;
+      this.totalEntityRecords = 1;
+      this.entityRecordsPerPage = 1;
+      this.filterMode = true;
+    } else {
+      this.totalEntityRecords = Number(entityRecords.total);
+      this.totalEntityRecordsBackup = this.totalEntityRecords;
+      this.entityRecordsPerPage = Number(entityRecords.per_page);
+      this.entityRecordsPerPageBackup = this.entityRecordsPerPage;
+      this.entityRecords[this.page] = entityRecords.data;
+    }
+    return entityRecords.data;
+  }
+}
