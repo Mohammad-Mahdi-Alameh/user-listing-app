@@ -31,3 +31,14 @@
     box-shadow: none !important;
     outline: none !important;
   }
+
+@media (max-width: 1000px) {
+  .custom-card {
+    max-width: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .card {
+    max-width: 20%;
+  }
+}
