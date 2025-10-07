@@ -15,9 +15,9 @@ export class UserService {
   getHeaders() {
     return new HttpHeaders({ 'x-api-key': environment.usersApiKey });
   }
-  getUsers() {
+  async getUsers() {
     try {
-      return firstValueFrom(this.apiService.get(ApiURL.users, this.getHeaders()));
+      return await firstValueFrom(this.apiService.get(ApiURL.users, this.getHeaders()));
     }
     catch (err) {
       console.error('Error fetching users', err);
@@ -26,12 +26,12 @@ export class UserService {
     }
   }
 
-  getUserById(id: number) {
+  async getUserById(id: number) {
     try {
-      return firstValueFrom(this.apiService.get(`${ApiURL.users}/${id}`, this.getHeaders()));
+      return await firstValueFrom(this.apiService.get(`${ApiURL.users}/${id}`, this.getHeaders()));
     } catch (err) {
-      console.error(`Error fetching user ${id}`, err);
       this.utilitiesService.notifyError(`Error fetching user ${id}`);
+      console.error(`Error fetching user ${id}`, err);
       throw err;
     }
   }

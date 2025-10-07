@@ -27,7 +27,11 @@ export class UserDetailsPageComponent implements OnInit {
     this.user = this.utlitiesService?.selectedEntity;
     this.userId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.user || (this.user.id != this.userId)) {
-      this.user = (await this.userService.getUserById(this.userId)).data;
+      try {
+        this.user = (await this.userService.getUserById(this.userId)).data;
+      } catch {
+        this.router.navigate([`/users`]);
+      }
     }
     this.loading = false;
     // this.loadingService.hide();
