@@ -1,8 +1,7 @@
 <div
-  *ngIf="!loading"
   class="flex justify-content-center align-items-center full-screen-container"
 >
-  <p-card class="custom-card">
+  <p-card class="custom-card" *ngIf="!loading">
     <div class="flex flex-column justify-content-center align-items-center">
       <div class="container">
         <!-- (click)="navigateToUserDetailsPage(entity)" -->
@@ -20,3 +19,4 @@
     </div></p-card
   >
 </div>
+<app-loading-overlay *ngIf="loading"></app-loading-overlay>
