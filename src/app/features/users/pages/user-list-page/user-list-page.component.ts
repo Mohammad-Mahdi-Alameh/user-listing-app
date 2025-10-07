@@ -18,7 +18,7 @@ export class UserListPageComponent implements OnInit {
   constructor(private userService: UserService) { }
 
   async ngOnInit(): Promise<void> {
-    this.usersEntityApiHeader = this.userService.headers;
+    this.usersEntityApiHeader = this.userService.getHeaders();
   }
   resetSearch() {
     this.searchTerm = '';

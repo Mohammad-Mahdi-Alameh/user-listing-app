@@ -4,20 +4,36 @@ import { firstValueFrom } from "rxjs";
 import { ApiURL } from "../miscellaneous/api.template";
 import { HttpHeaders } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
+import { UtilitiesService } from "./utilities.service";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService,
+    private utilitiesService: UtilitiesService) { }
 
-  headers = new HttpHeaders({ 'x-api-key': environment.usersApiKey });
-
+  getHeaders() {
+    return new HttpHeaders({ 'x-api-key': environment.usersApiKey });
+  }
   getUsers() {
-    return firstValueFrom(this.apiService.get(ApiURL.users, this.headers));
+    try {
+      return firstValueFrom(this.apiService.get(ApiURL.users, this.getHeaders()));
+    }
+    catch (err) {
+      console.error('Error fetching users', err);
+      this.utilitiesService.notifyError("Error fetching users");
+      throw err;
+    }
   }
 
   getUserById(id: number) {
-    return firstValueFrom(this.apiService.get(`${ApiURL.users}/${id}`, this.headers));
+    try {
+      return firstValueFrom(this.apiService.get(`${ApiURL.users}/${id}`, this.getHeaders()));
+    } catch (err) {
+      console.error(`Error fetching user ${id}`, err);
+      this.utilitiesService.notifyError(`Error fetching user ${id}`);
+      throw err;
+    }
   }
 
 }

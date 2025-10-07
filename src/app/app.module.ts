@@ -7,12 +7,13 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { LoadingOverlayComponent } from './shared/loading-overlay/loading-overlay.component';
-
-
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule, HttpClientModule,LoadingOverlayComponent],
-  bootstrap: [AppComponent]
+  imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule, HttpClientModule, LoadingOverlayComponent,ToastModule],
+  bootstrap: [AppComponent],
+  providers: [MessageService]
 })
 export class AppModule { }

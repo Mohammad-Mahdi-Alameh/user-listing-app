@@ -16,7 +16,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-custom-list',
   standalone: true,
-  imports: [CommonModule, DataViewModule, FormsModule, AccordionModule, InputTextModule, PaginatorModule, ButtonModule, CardModule,SkeletonModule],
+  imports: [CommonModule, DataViewModule, FormsModule, AccordionModule, InputTextModule, PaginatorModule, ButtonModule, CardModule, SkeletonModule],
   templateUrl: './custom-list.component.html',
   styleUrl: './custom-list.component.scss'
 })
@@ -55,7 +55,7 @@ export class CustomListComponent {
 
   constructor(private router: Router,
     private apiService: ApiService,
-    private utlitiesService: UtilitiesService) {
+    private utilitiesService: UtilitiesService) {
   }
 
   async handleSearchTermChange() {
@@ -88,25 +88,25 @@ export class CustomListComponent {
     ).subscribe(() => {
       this.handleSearchTermChange();
     });
-    if (this.utlitiesService.entityRecords && Object.keys(this.utlitiesService.entityRecords).length > 0) {
-      this.entityRecords = this.utlitiesService.entityRecords;
-      this.page = this.utlitiesService.lastViewedPage;
-      this.entityRecordsPerPage = this.utlitiesService.entityRecordsPerPage;
-      this.totalEntityRecords = this.utlitiesService.totalEntityRecords;
+    if (this.utilitiesService.entityRecords && Object.keys(this.utilitiesService.entityRecords).length > 0) {
+      this.entityRecords = this.utilitiesService.entityRecords;
+      this.page = this.utilitiesService.lastViewedPage;
+      this.entityRecordsPerPage = this.utilitiesService.entityRecordsPerPage;
+      this.totalEntityRecords = this.utilitiesService.totalEntityRecords;
       this.dataViewFirstIndex = (this.entityRecordsPerPage * (this.page - 1));
-      this.pagedEntityRecords = this.entityRecords[this.utlitiesService.lastViewedPage];
+      this.pagedEntityRecords = this.entityRecords[this.utilitiesService.lastViewedPage];
     } else {
       this.pagedEntityRecords = await this.initializeEntityRecords(this.entityApiUrl);
     }
     this.loading = false
   }
 
-  navigateToUserDetailsPage(entity:any) {
-    this.utlitiesService.lastViewedPage = this.page;
-    this.utlitiesService.entityRecords = this.entityRecords;
-    this.utlitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
-    this.utlitiesService.totalEntityRecords = this.totalEntityRecords;
-    this.utlitiesService.selectedEntity = entity;
+  navigateToUserDetailsPage(entity: any) {
+    this.utilitiesService.lastViewedPage = this.page;
+    this.utilitiesService.entityRecords = this.entityRecords;
+    this.utilitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
+    this.utilitiesService.totalEntityRecords = this.totalEntityRecords;
+    this.utilitiesService.selectedEntity = entity;
     this.router.navigate([`/users/${entity.id}`]);
   }
 
@@ -138,20 +138,33 @@ export class CustomListComponent {
   }
 
   async initializeEntityRecords(url: string, filterMode: boolean = false) {
-    let entityRecords = await firstValueFrom(this.apiService.get(`${url}?page=${this.page}`, this.entityApiHeader))
-    if (filterMode) {
-      this.filteredEntityRecords[this.page] = entityRecords.data;
-      this.totalEntityRecords = 1;
-      this.entityRecordsPerPage = 1;
-      this.filterMode = true;
-    } else {
-      this.totalEntityRecords = Number(entityRecords.total);
-      this.totalEntityRecordsBackup = this.totalEntityRecords;
-      this.entityRecordsPerPage = Number(entityRecords.per_page);
-      this.entityRecordsPerPageBackup = this.entityRecordsPerPage;
-      this.entityRecords[this.page] = entityRecords.data;
+    try {
+      let entityRecords = await firstValueFrom(this.apiService.get(`${url}?page=${this.page}`, this.entityApiHeader))
+      if (filterMode) {
+        this.filteredEntityRecords[this.page] = entityRecords.data;
+        this.totalEntityRecords = 1;
+        this.entityRecordsPerPage = 1;
+        this.filterMode = true;
+      } else {
+        this.totalEntityRecords = Number(entityRecords.total);
+        this.totalEntityRecordsBackup = this.totalEntityRecords;
+        this.entityRecordsPerPage = Number(entityRecords.per_page);
+        this.entityRecordsPerPageBackup = this.entityRecordsPerPage;
+        this.entityRecords[this.page] = entityRecords.data;
+      }
+      return entityRecords.data;
+    } catch (err) {
+      if (this.searchTerm.length > 0) {
+        console.error(`Error fetching user with id ${this.searchTerm}`, err);
+        this.utilitiesService.notifyError(`Couldnt find user with id ${this.searchTerm}`);
+      } else {
+        console.error(`Error fetching users`, err);
+        this.utilitiesService.notifyError(`Error fetching users`);
+      }
+      throw err;
+    } finally {
+      this.loading = false;
     }
-    return entityRecords.data;
   }
 
   counterArray(n: number): any[] {
