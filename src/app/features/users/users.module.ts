@@ -16,6 +16,7 @@ import { CardModule } from 'primeng/card';
 import { LoadingOverlayComponent } from '../../shared/loading-overlay/loading-overlay.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonGroupModule } from 'primeng/buttongroup';
 @NgModule({
   declarations: [
     UserListPageComponent, UserDetailsPageComponent
@@ -34,7 +35,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     CardModule,
     LoadingOverlayComponent,
     ProgressSpinnerModule,
-    InputNumberModule
+    InputNumberModule,
+    ButtonGroupModule
   ]
 })
 export class UsersModule { }

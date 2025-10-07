@@ -30,11 +30,15 @@ export class UserDetailsPageComponent implements OnInit {
       try {
         this.user = (await this.userService.getUserById(this.userId)).data;
       } catch {
-        this.router.navigate([`/users`]);
+        this.navigateToHomePage()
       }
     }
     this.loading = false;
     // this.loadingService.hide();
+  }
+
+  navigateToHomePage() {
+    this.router.navigate([`/users`]);
   }
 
 }

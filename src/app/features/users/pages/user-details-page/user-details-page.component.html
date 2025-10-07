@@ -2,7 +2,13 @@
   class="flex justify-content-center align-items-center full-screen-container"
 >
   <p-card class="custom-card" *ngIf="!loading">
-    <div class="flex flex-column justify-content-center align-items-center">
+    <div class="flex flex-column justify-content-center align-items-center custom-height">
+      <div class="flex justify-content-start col-12 mb-3">
+        <!-- <p-button icon="pi pi-arrow-left" /> -->
+        <p-buttonGroup>
+          <p-button label="Go Back" icon="pi pi-arrow-left" [outlined]="true" (click)="navigateToHomePage()" />
+        </p-buttonGroup>
+      </div>
       <div class="container">
         <!-- (click)="navigateToUserDetailsPage(entity)" -->
         <div class="card-user-img">
@@ -12,7 +18,7 @@
           />
         </div>
         <div class="card-user-info">
-          <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+          <h1 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h1>
           <p>{{ user.email }}</p>
         </div>
       </div>
