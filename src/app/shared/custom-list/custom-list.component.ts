@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag'; @Component({
+import { SkeletonModule } from 'primeng/skeleton';
+@Component({
   selector: 'app-custom-list',
   standalone: true,
-  imports: [CommonModule, DataViewModule, FormsModule, AccordionModule, InputTextModule, PaginatorModule, ButtonModule, TagModule, CardModule],
+  imports: [CommonModule, DataViewModule, FormsModule, AccordionModule, InputTextModule, PaginatorModule, ButtonModule, CardModule,SkeletonModule],
   templateUrl: './custom-list.component.html',
   styleUrl: './custom-list.component.scss'
 })
@@ -51,6 +52,7 @@ export class CustomListComponent {
   }
 
   private searchTermChanged = new Subject<string>();
+
   constructor(private router: Router,
     private apiService: ApiService,
     private utlitiesService: UtilitiesService) {
@@ -99,12 +101,13 @@ export class CustomListComponent {
     this.loading = false
   }
 
-  navigateToUserDetailsPage(userId: number) {
+  navigateToUserDetailsPage(entity:any) {
     this.utlitiesService.lastViewedPage = this.page;
     this.utlitiesService.entityRecords = this.entityRecords;
     this.utlitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
     this.utlitiesService.totalEntityRecords = this.totalEntityRecords;
-    this.router.navigate([`/users/${userId}`]);
+    this.utlitiesService.selectedEntity = entity;
+    this.router.navigate([`/users/${entity.id}`]);
   }
 
   async onPageChange(event: any) {
@@ -112,8 +115,8 @@ export class CustomListComponent {
     this.page = (event.first / event.rows) + 1;
     if (this.filterMode) {
       if (!this.filteredFetchedPages.includes(this.page)) {
-        let draftContracts = await this.initializeEntityRecords(this.criteriaEntityApiUrl, true);
-        if (draftContracts?.length == 0) {
+        let entityRecords = await this.initializeEntityRecords(this.criteriaEntityApiUrl, true);
+        if (entityRecords?.length == 0) {
           this.loading = false
           return;
         }
@@ -150,4 +153,9 @@ export class CustomListComponent {
     }
     return entityRecords.data;
   }
+
+  counterArray(n: number): any[] {
+    return Array(n);
+  }
+
 }

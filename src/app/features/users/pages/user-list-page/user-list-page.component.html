@@ -5,25 +5,27 @@
     <div class="flex flex-column justify-content-center align-items-center">
       <div class="flex justify-content-between align-items-center col-12 custom-header">
         <h1>Users</h1>
-        <p-inputGroup>
-          <p-iconField iconPosition="left">
-            <p-inputIcon styleClass="pi pi-search" />
-            <input
+        <div>
+          <p-inputGroup>
+            <p-iconField iconPosition="left">
+              <p-inputIcon styleClass="pi pi-search" />
+              <input
               type="text"
               pInputText
               placeholder="Search"
               class="search-input"
               [(ngModel)]="searchTerm"
-            />
-          </p-iconField>
-          <button
+              />
+            </p-iconField>
+            <button
             type="button"
             pButton
             icon="pi pi-times"
             class="p-button-custom"
             (click)="resetSearch()"
-          ></button>
-        </p-inputGroup>
+            ></button>
+          </p-inputGroup>
+        </div>
       </div>
       <app-custom-list
         class="container"

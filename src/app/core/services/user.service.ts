@@ -15,4 +15,9 @@ export class UserService {
   getUsers() {
     return firstValueFrom(this.apiService.get(ApiURL.users, this.headers));
   }
+
+  getUserById(id: number) {
+    return firstValueFrom(this.apiService.get(`${ApiURL.users}/${id}`, this.headers));
+  }
+
 }

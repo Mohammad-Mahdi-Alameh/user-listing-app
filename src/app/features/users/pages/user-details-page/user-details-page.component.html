@@ -1,1 +1,22 @@
-<p>user-details-page works!</p>
+<div
+  *ngIf="!loading"
+  class="flex justify-content-center align-items-center full-screen-container"
+>
+  <p-card class="custom-card">
+    <div class="flex flex-column justify-content-center align-items-center">
+      <div class="container">
+        <!-- (click)="navigateToUserDetailsPage(entity)" -->
+        <div class="card-user-img">
+          <img
+            [src]="user.avatar"
+            [alt]="user.first_name + ' ' + user.last_name"
+          />
+        </div>
+        <div class="card-user-info">
+          <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+          <p>{{ user.email }}</p>
+        </div>
+      </div>
+    </div></p-card
+  >
+</div>
