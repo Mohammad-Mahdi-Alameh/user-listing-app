@@ -3,6 +3,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ApiURL } from '../../../../core/miscellaneous/api.template';
 import { UserService } from '../../../../core/services/user.service';
 import { HttpHeaders } from '@angular/common/http';
+import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-list-page',
@@ -10,7 +11,7 @@ import { HttpHeaders } from '@angular/common/http';
   styleUrl: './user-list-page.component.scss'
 })
 export class UserListPageComponent implements OnInit {
-  users = [];
+  users: User[] = [];
   usersEntityApiUrl = ApiURL.users;
   usersEntityApiHeader = new HttpHeaders();
   searchTerm!: any;
@@ -21,25 +22,7 @@ export class UserListPageComponent implements OnInit {
     this.usersEntityApiHeader = this.userService.getHeaders();
   }
   resetSearch() {
-    // this.searchTerm = '';
     this.searchTerm = null
   }
-
-  // sanitizeSearchTerm() {
-  //   // Remove any non-numeric characters
-  //   this.searchTerm = this.searchTerm?.toString().replace(/[^0-9]/g, '');
-
-  //   // Convert to number and ensure it's at least 1
-  //   const numValue = parseInt(this.searchTerm || '0', 10);
-
-  //   // If less than 1, clear it
-  //   if (numValue < 1) {
-  //     this.searchTerm = '';
-  //   } else {
-  //     this.searchTerm = numValue.toString();
-  //   }
-  // }
-
-
 
 }
