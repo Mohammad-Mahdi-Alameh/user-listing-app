@@ -8,6 +8,7 @@ export class UtilitiesService {
   }
   lastViewedPage = 1;
   totalEntityRecords = 0;
+  entityRecordsPerPageBackup = 0;
   entityRecordsPerPage = 0;
   selectedEntity: any;
   constructor(

@@ -92,6 +92,7 @@ export class CustomListComponent {
       this.page = this.utilitiesService.lastViewedPage;
       this.entityRecordsPerPage = this.utilitiesService.entityRecordsPerPage;
       this.totalEntityRecords = this.utilitiesService.totalEntityRecords;
+      this.entityRecordsPerPageBackup = this.utilitiesService.entityRecordsPerPageBackup;
       this.dataViewFirstIndex = (this.entityRecordsPerPage * (this.page - 1));
       this.pagedEntityRecords = this.entityRecords[this.utilitiesService.lastViewedPage];
     } else {
@@ -109,6 +110,7 @@ export class CustomListComponent {
     this.utilitiesService.entityRecords = this.entityRecords;
     this.utilitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
     this.utilitiesService.totalEntityRecords = this.totalEntityRecords;
+    this.utilitiesService.entityRecordsPerPageBackup = this.entityRecordsPerPageBackup;
     this.utilitiesService.selectedEntity = entity;
     this.router.navigate([`/users/${entity.id}`]);
   }
