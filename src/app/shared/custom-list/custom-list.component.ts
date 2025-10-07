@@ -60,9 +60,7 @@ export class CustomListComponent {
 
   async handleSearchTermChange() {
     this.loading = true;
-    this.searchTerm = this.searchTerm.trim();
-    //pay attention if id wasnt number
-    if (!this.searchTerm || this.searchTerm.length < 1) {
+    if (!this.searchTerm || +this.searchTerm == 0) {
       if (this.dataView) {
         this.page = 1;
       } else {
@@ -154,7 +152,7 @@ export class CustomListComponent {
       }
       return entityRecords.data;
     } catch (err) {
-      if (this.searchTerm.length > 0) {
+      if (this.searchTerm) {
         console.error(`Error fetching user with id ${this.searchTerm}`, err);
         this.utilitiesService.notifyError(`Couldnt find user with id ${this.searchTerm}`);
       } else {
