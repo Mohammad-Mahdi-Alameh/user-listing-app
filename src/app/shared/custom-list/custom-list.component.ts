@@ -35,19 +35,19 @@ export class CustomListComponent {
   entityRecordsPerPage = 0;
   dataViewFirstIndex = 0;
   entityRecordsPerPageBackup = 0;
-  criteriaEntityApiUrl: string = '';
+  entityApiUrlWithFilter: string = '';
   entityRecords: { [key: number]: any[] } = {
   }
   entityRecordsBackup: { [key: number]: any[] } = {
   }
   filteredEntityRecords: { [key: number]: any[] } = {
   }
-  @Input() set searchTerm(value: string) {
+  @Input() set searchTerm(value: any) {
     this._searchTerm = value;
     this.searchTermChanged.next(value);
   }
-  private _searchTerm: string = '';
-  get searchTerm(): string {
+  private _searchTerm: any;
+  get searchTerm(): any {
     return this._searchTerm;
   }
 
@@ -74,12 +74,13 @@ export class CustomListComponent {
       this.loading = false;
       return;
     }
-    this.criteriaEntityApiUrl = `${this.entityApiUrl}/${this.searchTerm}`;
-    this.pagedEntityRecords = [await this.initializeEntityRecords(this.criteriaEntityApiUrl, true)];
+    this.entityApiUrlWithFilter = `${this.entityApiUrl}/${this.searchTerm}`;
+    this.pagedEntityRecords = [await this.initializeEntityRecords(this.entityApiUrlWithFilter, true)];
     this.loading = false;
   }
 
   async ngOnInit() {
+    // debounce user input for 300ms to reduce API calls and improve UX
     this.searchTermChanged.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -100,6 +101,10 @@ export class CustomListComponent {
   }
 
   navigateToUserDetailsPage(entity: any) {
+    if (this.filterMode) {
+      this.searchTerm = null;
+      this.handleSearchTermChange();
+    }
     this.utilitiesService.lastViewedPage = this.page;
     this.utilitiesService.entityRecords = this.entityRecords;
     this.utilitiesService.entityRecordsPerPage = this.entityRecordsPerPage;
@@ -112,8 +117,9 @@ export class CustomListComponent {
     this.loading = true
     this.page = (event.first / event.rows) + 1;
     if (this.filterMode) {
+      //if page with filter already return it else fetch it
       if (!this.filteredFetchedPages.includes(this.page)) {
-        let entityRecords = await this.initializeEntityRecords(this.criteriaEntityApiUrl, true);
+        let entityRecords = await this.initializeEntityRecords(this.entityApiUrlWithFilter, true);
         if (entityRecords?.length == 0) {
           this.loading = false
           return;
@@ -122,6 +128,7 @@ export class CustomListComponent {
       }
       this.pagedEntityRecords = this.filteredEntityRecords[this.page];
     } else {
+      //if page already return it else fetch it
       if (!this.fetchedPages.includes(this.page)) {
         let entityRecords = await this.initializeEntityRecords(this.entityApiUrl);
         if (entityRecords?.length == 0) {
@@ -144,6 +151,7 @@ export class CustomListComponent {
         this.entityRecordsPerPage = 1;
         this.filterMode = true;
       } else {
+        this.filterMode = false;
         this.totalEntityRecords = Number(entityRecords.total);
         this.totalEntityRecordsBackup = this.totalEntityRecords;
         this.entityRecordsPerPage = Number(entityRecords.per_page);
@@ -163,10 +171,6 @@ export class CustomListComponent {
     } finally {
       this.loading = false;
     }
-  }
-
-  counterArray(n: number): any[] {
-    return Array(n);
   }
 
 }

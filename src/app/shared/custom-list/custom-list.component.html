@@ -1,15 +1,15 @@
 <p-dataView
-#dv
-[value]="pagedEntityRecords"
-[rows]="entityRecordsPerPage"
-[paginator]="true"
-[lazy]="true"
-[loading]="loading"
-[totalRecords]="totalEntityRecords"
-[first]="dataViewFirstIndex"
-(onPage)="onPageChange($event)"
+  #dv
+  [value]="pagedEntityRecords"
+  [rows]="entityRecordsPerPage"
+  [paginator]="true"
+  [lazy]="true"
+  [loading]="loading"
+  [totalRecords]="totalEntityRecords"
+  [first]="dataViewFirstIndex"
+  (onPage)="onPageChange($event)"
 >
-<!-- (onLazyLoad)="onPageChange($event)" -->
+  <!-- (onLazyLoad)="onPageChange($event)" -->
   <ng-template pTemplate="list" let-entityRecords>
     <div class="container">
       <div
@@ -30,17 +30,4 @@
       </div>
     </div>
   </ng-template>
-   <!-- <ng-template pTemplate="loading">
-    <div class="container">
-      <div class="card" *ngFor="let item of counterArray(entityRecordsPerPage)">
-        <div class="card-user-img">
-          <p-skeleton shape="circle" size="4rem"></p-skeleton>
-        </div>
-        <div class="card-user-info">
-          <p-skeleton width="10rem" styleClass="mb-2"></p-skeleton>
-          <p-skeleton width="8rem" styleClass="mb-2"></p-skeleton>
-        </div>
-      </div>
-    </div>
-  </ng-template> -->
 </p-dataView>
